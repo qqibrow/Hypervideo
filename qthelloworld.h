@@ -8,6 +8,7 @@
 #include "HyperLink.h"
 #include "Session.h"
 #include <string>
+#include "VideoProcessor.h"
 
 class qtHelloWorld : public QMainWindow
 {
@@ -27,9 +28,16 @@ public:
 		void connecVideoClicked();
 		void saveFileClicked();
 		void updateView();
+		void mousePressEvent ( QMouseEvent * event );
+		void mouseMoveEvent ( QMouseEvent * event );
+		void mouseReleaseEvent ( QMouseEvent * event );
+private:
+	bool insidePrimaryWidget(QPoint& point);
 private:
 	Ui::qtHelloWorldClass ui;
 	Session session;
+	QPoint last;
+	
 };
 
 #endif // QTHELLOWORLD_H

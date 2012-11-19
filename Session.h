@@ -18,6 +18,11 @@ public:
 	void addKeyframe( std::string name, Keyframe key );
 	void connectVideo( std::string name, int frames );
 	void saveFile( std::string fileName );
+	int getPrimaryVideoLength();
+	int getVideoLength( Video* video );
+	int getSecondaryVideoLength();
+	Video* getPrimaryVideo();
+	 Video* getSecondaryVideo() const;
 private:
 	Video* primaryVideo, *secondaryVideo;
 	std::map<std::string, HyperLink> hyperlinks;

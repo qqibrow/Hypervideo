@@ -8,15 +8,15 @@ class VideoProcessor
 {
 public:
 	VideoProcessor();
-	bool init(int w, int h, char* filePath);
+	bool init(int w, int h, const char* filePath);
 	bool getNextFrame();
-
+	bool getToFrame(int value);
 	int getWidth();
 	int getHeight();
 	char* getImageData();
 
 	~VideoProcessor();
-
+	int getFileLength();
 private:
 	int frames;
 	int fileLength;

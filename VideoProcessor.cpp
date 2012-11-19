@@ -4,12 +4,13 @@
 #include "FileController.h"
 
 #include <string>
+#include <assert.h>
 
 using namespace std;
 
 VideoProcessor::~VideoProcessor()
 {
-	delete[] buff;
+	if(!buff) delete[] buff;
 }
 
 bool VideoProcessor::getNextFrame()
@@ -48,7 +49,7 @@ char* VideoProcessor::getImageData()
 	return image.getImageData();
 }
 
-bool VideoProcessor::init( int w, int h, char* filePath )
+bool VideoProcessor::init( int w, int h, const char* filePath )
 {
 	image.setWidth(w);
 	image.setHeight(h);
@@ -71,5 +72,29 @@ bool VideoProcessor::init( int w, int h, char* filePath )
 VideoProcessor::VideoProcessor()
 {
 
+}
+
+int VideoProcessor::getFileLength()
+{
+	return this->fileLength;
+}
+
+bool VideoProcessor::getToFrame( int value )
+{
+	this->frames = value;
+	int h = image.getHeight();
+	int w =  image.getWidth();
+
+	// move the pointer to current image start position
+
+	int offset = h * w * 3 * frames;
+	if( offset == fileLength)
+	{
+		assert(false && "this means the video get the the last frame");
+		frames = 0;
+		offset = 0;
+	}
+	char* currentStartPosition = buff + offset;
+	return image.ReadImageFromPointer(currentStartPosition);
 }
 

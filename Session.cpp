@@ -1,5 +1,6 @@
 #include "Session.h"
 #include <fstream>
+#include <assert.h>
 
 using namespace std;
 
@@ -59,5 +60,32 @@ void Session::addHyperLink( std::string name, Keyframe keyframe )
 
 void Session::videoGoto( Video* video, int frames )
 {
+	video->goToframeNo(frames);
+}
 
+int Session::getPrimaryVideoLength()
+{
+	return getVideoLength(this->primaryVideo);
+}
+
+int Session::getVideoLength( Video* video )
+{
+	return video->getFrames();
+}
+
+int Session::getSecondaryVideoLength()
+{
+	return getVideoLength(this->secondaryVideo);
+}
+
+Video* Session::getPrimaryVideo()
+{
+	assert(primaryVideo != NULL);
+	return primaryVideo;
+}
+
+ Video* Session::getSecondaryVideo() const
+{
+	assert(secondaryVideo != NULL);
+	return secondaryVideo;
 }

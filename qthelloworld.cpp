@@ -1,49 +1,86 @@
 #include "qthelloworld.h"
+ #include <QImage>
 #include <QMessageBox>
-
+#include <QFileDialog>
+#include "..\src\gui\kernel\qevent.h"
 using namespace std;
 
 qtHelloWorld::qtHelloWorld(QWidget *parent, Qt::WFlags flags)
 	: QMainWindow(parent, flags)
 {
 	ui.setupUi(this);
-	connect(ui.addButton, SIGNAL(clicked()), this, SLOT(pushButtonClicked()));
+
+	// set CSS
+	ui.primaryVideoView->setStyleSheet("border: 2px solid black");
+
+	connect(ui.addPrimaryVideoButton, SIGNAL(clicked()), this, SLOT(addPrimaryVideoClicked()));
+	connect(ui.addSecondaryVideoButton, SIGNAL(clicked()), this, SLOT(addSecondVideoClicked()));
+	connect(ui.primaryVideoSlider, SIGNAL(sliderReleased()),this,SLOT(primaryVideoSliderClicked()));
+	connect(ui.secondaryVideoSlider, SIGNAL(sliderReleased()),this,SLOT(secondaryVideoSliderClicked()));
+	//videoProcessor.init(176,144,"Incursion_176x144.rgb");
+
 }
 
 qtHelloWorld::~qtHelloWorld()
 {
-
+	
 }
 
 void qtHelloWorld::pushButtonClicked()
 {
-	 QMessageBox::information(this,"Button clicked!\n", "Warning");
+// 	videoProcessor.getNextFrame();
+// 	QImage image((uchar*)videoProcessor.getImageData(), 176, 144, QImage::Format_RGB888);
+// 	ui.label->setPixmap(QPixmap::fromImage(image));
+//	ui.label->setText("hello world");
+		
 }
 
 void qtHelloWorld::addPrimaryVideoClicked()
 {
-	string videoName;
-	Video* primaryVideo = Video::loadVideo(videoName);
-	session.setPrimaryVideo(primaryVideo);
+	QString videoName = QFileDialog::getOpenFileName(this, tr("Open File"),
+		"/",tr("Video (*.rgb)"));
+	
+	if(videoName != "")
+	{
+		std::string utf8_text = videoName.toUtf8().constData();
+		session.setPrimaryVideo(new Video(utf8_text));
+		ui.primaryVideoSlider->setRange(1,session.getPrimaryVideoLength());
+		//ui.primaryVideoView->get
+		//ui.primaryVideoView->setFixedWidth()
+		ui.primaryVideoView->setPixmap(QPixmap::fromImage(this->session.getPrimaryVideo()->getQimage()));
+	}
+	
 }
 
 void qtHelloWorld::addSecondVideoClicked()
 {
-	string videoName;
-	Video* secondaryVideo = Video::loadVideo(videoName);
-	session.setSecondaryVideo(secondaryVideo);
+
+	QString videoName = QFileDialog::getOpenFileName(this, tr("Open File"),
+		"/",tr("Images (*.rgb)"));
+	if(videoName != "")
+	{
+		std::string utf8_text = videoName.toUtf8().constData();
+		session.setSecondaryVideo(new Video(utf8_text));
+		ui.secondaryVideoSlider->setRange(1,session.getSecondaryVideoLength());
+		ui.secondaryVideoView->setPixmap(QPixmap::fromImage(session.getSecondaryVideo()->getQimage()));
+	}
+
+	
 }
 
 void qtHelloWorld::primaryVideoSliderClicked()
 {
-	int frames;
-	session.primaryVideoGoto(frames);
+	int value = this->ui.primaryVideoSlider->value();
+	session.primaryVideoGoto(value);
+	ui.primaryVideoView->setPixmap(QPixmap::fromImage(this->session.getPrimaryVideo()->getQimage()));
 }
 
 void qtHelloWorld::secondaryVideoSliderClicked()
 {
-	int frames;
-	session.secondaryVideoGoto(frames);
+	int value = this->ui.secondaryVideoSlider->value();
+	session.secondaryVideoGoto(value);
+	ui.secondaryVideoView->setPixmap(QPixmap::fromImage(this->session.getSecondaryVideo()->getQimage()));
+	
 }
 
 
@@ -82,5 +119,60 @@ void qtHelloWorld::saveFileClicked()
 void qtHelloWorld::updateView()
 {
 
+}
+
+void qtHelloWorld::mousePressEvent( QMouseEvent * event )
+{
+	QPoint p = event->pos() - ui.primaryVideoView->pos();
+	//string info = "the current point position is " + std::to_string((long double)p.x()) + " , " + std::to_string((long double)p.y());
+	if(insidePrimaryWidget(p))
+		last = p;
+	else
+	{
+		last.setX(0);
+		last.setY(0);
+	}
+		//QMessageBox::information(NULL, "Title", QString(info.c_str()), QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
+
+//	this->ui->primaryVideoView->rect();
+}
+
+void qtHelloWorld::mouseMoveEvent( QMouseEvent * event )
+{
+	if (!last.isNull())
+	{
+
+		QPoint cur = event->pos() - ui.primaryVideoView->pos();
+		ui.primaryVideoView->clear();
+		QRect rec(last, cur);
+		QImage backImage = session.getPrimaryVideo()->getQimage().copy();
+		QPainter* painter = new QPainter(&backImage); 
+		painter->setPen(Qt::blue);
+		painter->drawRect(rec);
+		ui.primaryVideoView->setPixmap(QPixmap::fromImage(backImage));
+		delete painter;
+	}
+}
+
+void qtHelloWorld::mouseReleaseEvent( QMouseEvent * event )
+{
+	if (!last.isNull())
+	{
+		QPoint cur = event->pos() - ui.primaryVideoView->pos();
+		ui.primaryVideoView->clear();
+		QRect rec(last, cur);
+		QImage backImage = session.getPrimaryVideo()->getQimage().copy();
+		QPainter* painter = new QPainter(&backImage);
+		painter->setPen(Qt::red);
+		painter->drawRect(rec);
+		ui.primaryVideoView->setPixmap(QPixmap::fromImage(backImage));
+		delete painter;
+	}
+}
+
+bool qtHelloWorld::insidePrimaryWidget(QPoint& p)
+{
+	QRect rect = ui.primaryVideoView->rect();
+	return rect.contains(p);
 }
 
