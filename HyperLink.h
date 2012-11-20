@@ -8,7 +8,9 @@ class HyperLink
 {
 public:
 	HyperLink(void);
+	HyperLink(std::string name);
 	~HyperLink(void);
+	void addKeyFrame(Keyframe key);
 	std::ostream& operator<<(std::ostream& out);
 private:
 	std::vector<Keyframe> keyframes;

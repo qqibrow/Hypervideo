@@ -25,6 +25,10 @@ public:
 		void primaryVideoSliderClicked();
 		void secondaryVideoSliderClicked();
 		void finishDrawingRectangle();
+		void addLinkClicked();
+
+		void addKeyFrameToSession( std::string linkName );
+
 		void connecVideoClicked();
 		void saveFileClicked();
 		void updateView();
@@ -37,7 +41,7 @@ private:
 	Ui::qtHelloWorldClass ui;
 	Session session;
 	QPoint last;
-	
+	QRect CurKeyFrameRect;
 };
 
 #endif // QTHELLOWORLD_H

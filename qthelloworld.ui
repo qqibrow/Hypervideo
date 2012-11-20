@@ -7,62 +7,27 @@
     <x>0</x>
     <y>0</y>
     <width>623</width>
-    <height>654</height>
+    <height>520</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>qtHelloWorld</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <widget class="QPushButton" name="addPrimaryVideoButton">
-    <property name="geometry">
-     <rect>
-      <x>40</x>
-      <y>30</y>
-      <width>131</width>
-      <height>23</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>import Primary Video</string>
-    </property>
-   </widget>
-   <widget class="QWidget" name="layoutWidget">
-    <property name="geometry">
-     <rect>
-      <x>230</x>
-      <y>30</y>
-      <width>161</width>
-      <height>93</height>
-     </rect>
-    </property>
-    <layout class="QVBoxLayout" name="verticalLayout_4">
-     <item>
-      <widget class="QLabel" name="label_3">
-       <property name="text">
-        <string>Set Link Name</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QListView" name="listView"/>
-     </item>
-    </layout>
-   </widget>
    <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>450</x>
       <y>20</y>
-      <width>82</width>
+      <width>88</width>
       <height>54</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout_5">
      <item>
-      <widget class="QPushButton" name="createLinkButton">
+      <widget class="QPushButton" name="connectVideoButton">
        <property name="text">
-        <string>Create Links</string>
+        <string>Connect Video</string>
        </property>
       </widget>
      </item>
@@ -74,29 +39,6 @@
       </widget>
      </item>
     </layout>
-   </widget>
-   <widget class="QPushButton" name="addSecondaryVideoButton">
-    <property name="geometry">
-     <rect>
-      <x>30</x>
-      <y>70</y>
-      <width>141</width>
-      <height>23</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>import Secondary Video</string>
-    </property>
-   </widget>
-   <widget class="QGraphicsView" name="graphicsView">
-    <property name="geometry">
-     <rect>
-      <x>40</x>
-      <y>400</y>
-      <width>256</width>
-      <height>192</height>
-     </rect>
-    </property>
    </widget>
    <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
@@ -127,8 +69,8 @@
    <widget class="QLabel" name="primaryVideoView">
     <property name="geometry">
      <rect>
-      <x>42</x>
-      <y>162</y>
+      <x>32</x>
+      <y>192</y>
       <width>176</width>
       <height>144</height>
      </rect>
@@ -140,8 +82,8 @@
    <widget class="QSlider" name="primaryVideoSlider">
     <property name="geometry">
      <rect>
-      <x>40</x>
-      <y>320</y>
+      <x>30</x>
+      <y>350</y>
       <width>181</width>
       <height>19</height>
      </rect>
@@ -150,6 +92,58 @@
      <enum>Qt::Horizontal</enum>
     </property>
    </widget>
+   <widget class="QListWidget" name="listWidget">
+    <property name="geometry">
+     <rect>
+      <x>240</x>
+      <y>10</y>
+      <width>161</width>
+      <height>141</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QWidget" name="">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>30</y>
+      <width>142</width>
+      <height>83</height>
+     </rect>
+    </property>
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
+      <widget class="QPushButton" name="addPrimaryVideoButton">
+       <property name="text">
+        <string>import Primary Video</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="addSecondaryVideoButton">
+       <property name="text">
+        <string>import Secondary Video</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="createLinkButton">
+       <property name="text">
+        <string>create a hyperlink</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <zorder>addPrimaryVideoButton</zorder>
+   <zorder>layoutWidget</zorder>
+   <zorder>addSecondaryVideoButton</zorder>
+   <zorder>layoutWidget</zorder>
+   <zorder>primaryVideoView</zorder>
+   <zorder>primaryVideoSlider</zorder>
+   <zorder>createLinkButton</zorder>
+   <zorder>listWidget</zorder>
+   <zorder>secondaryVideoView</zorder>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">

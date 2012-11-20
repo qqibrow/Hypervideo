@@ -2,8 +2,17 @@
 
 using namespace std;
 
+struct comp {
+	bool operator() (Keyframe& i,Keyframe& j) { return (i.getKeyFrameNo()<j.getKeyFrameNo());}
+} compKeyFrame;
+
 HyperLink::HyperLink(void)
 {
+}
+
+HyperLink::HyperLink( std::string name ):name(name)
+{
+
 }
 
 
@@ -29,4 +38,10 @@ ostream& HyperLink::operator<<( ostream& out )
 // 	}
 
 	return out;
+}
+
+void HyperLink::addKeyFrame( Keyframe key )
+{
+	this->keyframes.push_back(key);
+	sort(keyframes.begin(), keyframes.end(), compKeyFrame);
 }

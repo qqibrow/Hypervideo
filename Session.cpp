@@ -1,7 +1,7 @@
 #include "Session.h"
 #include <fstream>
 #include <assert.h>
-
+#include <string>
 using namespace std;
 
 Session::Session(void):primaryVideo(NULL),secondaryVideo(NULL)
@@ -36,8 +36,17 @@ void Session::secondaryVideoGoto( int frames )
 
 void Session::addKeyframe( string name, Keyframe key )
 {
-	throw std::exception("The method or operation is not implemented.");
-	// get the hyperlink from the name in the map, and then add key to that hyperlink
+	// find the hyperlink with name:name in the map
+	map<string,HyperLink>::iterator it;
+	it = hyperlinkMap.find(name);
+	if( it == hyperlinkMap.end()) // doesn't find 
+	{
+		HyperLink temp(name);
+		temp.addKeyFrame(key);
+		hyperlinkMap.insert(pair<string, HyperLink>(name, temp));
+	}
+	else
+		it->second.addKeyFrame(key);
 }
 
 void Session::connectVideo( string name, int frames )
@@ -89,3 +98,24 @@ Video* Session::getPrimaryVideo()
 	assert(secondaryVideo != NULL);
 	return secondaryVideo;
 }
+
+ bool Session::linkNameExist( std::string name )
+ {
+	 if(hyperlinkMap.empty())
+		 return false;
+
+	 map<string,HyperLink>::iterator it = hyperlinkMap.find(name);
+	 return it != hyperlinkMap.end();
+ }
+
+ vector<string> Session::getKeys()
+ {
+	vector<string> strs;
+	if( hyperlinkMap.empty())
+		return strs;
+	for(map<string, HyperLink>::iterator it = hyperlinkMap.begin(); it != hyperlinkMap.end(); it++)
+	{
+		strs.push_back(it->first);
+	}
+	return strs;
+ }

@@ -3,6 +3,7 @@
 #include <map>
 #include <string>
 #include "HyperLink.h"
+#include <vector>
 
 class Session
 {
@@ -16,6 +17,7 @@ public:
 	void secondaryVideoGoto(int frames);
 	void videoGoto(Video* video, int frames);
 	void addKeyframe( std::string name, Keyframe key );
+	bool linkNameExist(std::string name);
 	void connectVideo( std::string name, int frames );
 	void saveFile( std::string fileName );
 	int getPrimaryVideoLength();
@@ -23,8 +25,9 @@ public:
 	int getSecondaryVideoLength();
 	Video* getPrimaryVideo();
 	 Video* getSecondaryVideo() const;
+	 std::vector<std::string> getKeys();
 private:
 	Video* primaryVideo, *secondaryVideo;
-	std::map<std::string, HyperLink> hyperlinks;
+	std::map<std::string, HyperLink> hyperlinkMap;
 };
 

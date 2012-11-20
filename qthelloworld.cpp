@@ -2,7 +2,10 @@
  #include <QImage>
 #include <QMessageBox>
 #include <QFileDialog>
+#include <QInputDialog>
+#include <QPainter>
 #include "..\src\gui\kernel\qevent.h"
+#include <assert.h>
 using namespace std;
 
 qtHelloWorld::qtHelloWorld(QWidget *parent, Qt::WFlags flags)
@@ -17,6 +20,7 @@ qtHelloWorld::qtHelloWorld(QWidget *parent, Qt::WFlags flags)
 	connect(ui.addSecondaryVideoButton, SIGNAL(clicked()), this, SLOT(addSecondVideoClicked()));
 	connect(ui.primaryVideoSlider, SIGNAL(sliderReleased()),this,SLOT(primaryVideoSliderClicked()));
 	connect(ui.secondaryVideoSlider, SIGNAL(sliderReleased()),this,SLOT(secondaryVideoSliderClicked()));
+	connect(ui.createLinkButton, SIGNAL(clicked()), this, SLOT(addLinkClicked()));
 	//videoProcessor.init(176,144,"Incursion_176x144.rgb");
 
 }
@@ -86,6 +90,9 @@ void qtHelloWorld::secondaryVideoSliderClicked()
 
 void qtHelloWorld::finishDrawingRectangle()
 {
+	if(CurKeyFrameRect.isNull())
+		return;
+
 	Area area; // check whether it's valid
 	int frame;
 	Keyframe key(area, frame);
@@ -156,6 +163,7 @@ void qtHelloWorld::mouseMoveEvent( QMouseEvent * event )
 
 void qtHelloWorld::mouseReleaseEvent( QMouseEvent * event )
 {
+	
 	if (!last.isNull())
 	{
 		QPoint cur = event->pos() - ui.primaryVideoView->pos();
@@ -167,6 +175,15 @@ void qtHelloWorld::mouseReleaseEvent( QMouseEvent * event )
 		painter->drawRect(rec);
 		ui.primaryVideoView->setPixmap(QPixmap::fromImage(backImage));
 		delete painter;
+		CurKeyFrameRect = rec;
+
+		QList<QListWidgetItem *> list = ui.listWidget->selectedItems();
+		assert(list.size() < 2);
+		if(!list.empty())
+		{
+			addKeyFrameToSession(list[0]->text().toUtf8().constData());
+			QMessageBox::information(NULL, "Title","added a keyframe to a hyperlink", QMessageBox::Yes, QMessageBox::Yes);
+		}
 	}
 }
 
@@ -174,5 +191,59 @@ bool qtHelloWorld::insidePrimaryWidget(QPoint& p)
 {
 	QRect rect = ui.primaryVideoView->rect();
 	return rect.contains(p);
+}
+
+void qtHelloWorld::addLinkClicked()
+{
+	if (CurKeyFrameRect.isNull())
+	{
+		QMessageBox::information(NULL, "Title","please draw a rectangle first", QMessageBox::Yes, QMessageBox::Yes);
+	}
+	else
+	{
+		bool ok;
+		QString text = QInputDialog::getText(this, tr("QInputDialog::getText()"),
+			tr("Link Name:"), QLineEdit::Normal,
+			QDir::home().dirName(), &ok);
+
+		string linkName;
+		if (!ok || text.isEmpty())
+		{
+			QMessageBox::information(NULL, "Title","please input hyperlink name", QMessageBox::Yes, QMessageBox::Yes);
+			return;
+		}
+		linkName = text.toUtf8().constData();
+		if(session.linkNameExist(linkName))
+		{
+			QMessageBox::information(NULL, "Title","name exist,please choose another name", QMessageBox::Yes, QMessageBox::Yes);
+			return;
+		}
+
+		// 这里应该直接创建到session中hyperlink
+		addKeyFrameToSession(linkName);
+
+
+		//update items in the list
+		vector<string> list = session.getKeys();
+		ui.listWidget->clear();
+		for( int i = 0; i < list.size(); i++)
+		{
+// 			QListWidgetItem *newItem = new QListWidgetItem;
+// 			newItem->setText(list[i]);
+// 			ui.listWidget->insertItem(i, newItem);
+			ui.listWidget->addItem(list[i].c_str());
+		}
+	//	ui.li
+		
+	}
+}
+
+void qtHelloWorld::addKeyFrameToSession( string linkName )
+{
+	Area area(CurKeyFrameRect);
+	int frame = ui.primaryVideoSlider->value();
+
+	Keyframe key(area, frame);
+	session.addKeyframe(linkName,key);
 }
 
