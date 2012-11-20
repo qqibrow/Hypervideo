@@ -78,6 +78,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="adddialog.cpp" />
+    <ClCompile Include="FileController.cpp" />
     <ClCompile Include="GeneratedFiles\Debug\moc_adddialog.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </ClCompile>
@@ -97,11 +98,13 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="HyperLink.cpp" />
+    <ClCompile Include="Image.cpp" />
     <ClCompile Include="Keyframe.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="qthelloworld.cpp" />
     <ClCompile Include="Session.cpp" />
     <ClCompile Include="Video.cpp" />
+    <ClCompile Include="VideoProcessor.cpp" />
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="qthelloworld.h">
@@ -129,11 +132,16 @@
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="FileController.h" />
     <ClInclude Include="GeneratedFiles\ui_adddialog.h" />
     <ClInclude Include="HyperLink.h" />
+    <ClInclude Include="Image.h" />
     <ClInclude Include="Keyframe.h" />
+    <ClInclude Include="Params.h" />
     <ClInclude Include="Session.h" />
+    <ClInclude Include="timer.h" />
     <ClInclude Include="Video.h" />
+    <ClInclude Include="VideoProcessor.h" />
     <CustomBuild Include="adddialog.h">
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Moc%27ing adddialog.h...</Message>

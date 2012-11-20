@@ -8,8 +8,11 @@ class HyperLink
 {
 public:
 	HyperLink(void);
+	HyperLink(std::string name);
 	~HyperLink(void);
-	std::ostream& operator<<(std::ostream& out);
+	void addKeyFrame(Keyframe key);
+	void connectToVideo( std::string name, int frames );
+	friend std::ostream& operator<<(std::ostream& out, const HyperLink& keyframe);
 private:
 	std::vector<Keyframe> keyframes;
 	std::string name;

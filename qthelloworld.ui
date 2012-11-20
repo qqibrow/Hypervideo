@@ -6,89 +6,149 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>586</width>
-    <height>400</height>
+    <width>623</width>
+    <height>520</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>qtHelloWorld</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
-      <x>320</x>
+      <x>450</x>
+      <y>20</y>
+      <width>88</width>
+      <height>54</height>
+     </rect>
+    </property>
+    <layout class="QVBoxLayout" name="verticalLayout_5">
+     <item>
+      <widget class="QPushButton" name="connectVideoButton">
+       <property name="text">
+        <string>Connect Video</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="saveFileButton">
+       <property name="text">
+        <string>Save file</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QLabel" name="primaryVideoView">
+    <property name="geometry">
+     <rect>
+      <x>32</x>
+      <y>190</y>
+      <width>176</width>
+      <height>144</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>primaryVideo</string>
+    </property>
+   </widget>
+   <widget class="QSlider" name="primaryVideoSlider">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>350</y>
+      <width>181</width>
+      <height>19</height>
+     </rect>
+    </property>
+    <property name="orientation">
+     <enum>Qt::Horizontal</enum>
+    </property>
+   </widget>
+   <widget class="QListWidget" name="listWidget">
+    <property name="geometry">
+     <rect>
+      <x>240</x>
+      <y>10</y>
+      <width>161</width>
+      <height>141</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QWidget" name="layoutWidget">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
       <y>30</y>
-      <width>77</width>
-      <height>171</height>
+      <width>142</width>
+      <height>83</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout">
      <item>
-      <widget class="QPushButton" name="addButton">
+      <widget class="QPushButton" name="addPrimaryVideoButton">
        <property name="text">
-        <string>Add</string>
+        <string>import Primary Video</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="deleteButton">
+      <widget class="QPushButton" name="addSecondaryVideoButton">
        <property name="text">
-        <string>Delete</string>
+        <string>import Secondary Video</string>
        </property>
       </widget>
      </item>
      <item>
-      <spacer name="verticalSpacer">
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
+      <widget class="QPushButton" name="createLinkButton">
+       <property name="text">
+        <string>create a hyperlink</string>
        </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>20</width>
-         <height>40</height>
-        </size>
-       </property>
-      </spacer>
+      </widget>
      </item>
     </layout>
    </widget>
-   <widget class="QWidget" name="">
+   <widget class="QLabel" name="secondaryVideoView">
     <property name="geometry">
      <rect>
-      <x>20</x>
-      <y>20</y>
-      <width>258</width>
-      <height>221</height>
+      <x>320</x>
+      <y>190</y>
+      <width>176</width>
+      <height>144</height>
      </rect>
     </property>
-    <layout class="QGridLayout" name="gridLayout">
-     <item row="0" column="0">
-      <widget class="QListWidget" name="addressList"/>
-     </item>
-     <item row="1" column="0">
-      <widget class="QLabel" name="nameLabel">
-       <property name="text">
-        <string>&lt;No item selected&gt;</string>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="0">
-      <widget class="QLabel" name="emailLabel">
-       <property name="text">
-        <string/>
-       </property>
-      </widget>
-     </item>
-    </layout>
+    <property name="text">
+     <string>secondaryVideo</string>
+    </property>
    </widget>
+   <widget class="QSlider" name="secondaryVideoSlider">
+    <property name="geometry">
+     <rect>
+      <x>310</x>
+      <y>350</y>
+      <width>199</width>
+      <height>19</height>
+     </rect>
+    </property>
+    <property name="orientation">
+     <enum>Qt::Horizontal</enum>
+    </property>
+   </widget>
+   <zorder>layoutWidget</zorder>
+   <zorder>layoutWidget</zorder>
+   <zorder>primaryVideoView</zorder>
+   <zorder>primaryVideoSlider</zorder>
+   <zorder>listWidget</zorder>
+   <zorder>secondaryVideoView</zorder>
+   <zorder>secondaryVideoSlider</zorder>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>586</width>
+     <width>623</width>
      <height>23</height>
     </rect>
    </property>

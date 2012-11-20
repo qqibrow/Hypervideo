@@ -1,13 +1,28 @@
 #pragma once
 #include <string>
+#include <QImage>
+#include <QPixmap>
+#include "VideoProcessor.h"
+#define IMAGE_W 176
+#define IMAGE_H 144
+
 
 
 class Video
 {
 public:
 	Video(void);
+	Video(std::string videoName);
 	~Video(void);
-	static Video* loadVideo( std::string videoName );
-	void primaryVideoGoto( int frames );
+	void goToframeNo( int frames );
+	std::string getVideoName() const;
+	int getTotalFrames() const;
+	QImage getQimage() ;
+
+private:
+	std::string videoName;
+	VideoProcessor videoProcessor;
+	int totalFrames;
+
 };
 

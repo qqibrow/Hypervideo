@@ -1,6 +1,7 @@
 #include "Session.h"
 #include <fstream>
-
+#include <assert.h>
+#include <string>
 using namespace std;
 
 Session::Session(void):primaryVideo(NULL),secondaryVideo(NULL)
@@ -23,41 +24,75 @@ void Session::setSecondaryVideo( Video* secondaryVideo )
 	this->secondaryVideo = secondaryVideo;
 }
 
-void Session::primaryVideoGoto( int frames )
-{
-	this->videoGoto(primaryVideo, frames);
-}
-
-void Session::secondaryVideoGoto( int frames )
-{
-	this->videoGoto(secondaryVideo,frames);
-}
-
 void Session::addKeyframe( string name, Keyframe key )
 {
-	throw std::exception("The method or operation is not implemented.");
-	// get the hyperlink from the name in the map, and then add key to that hyperlink
+	// find the hyperlink with name:name in the map
+	map<string,HyperLink>::iterator it = hyperlinkMap.find(name);
+
+	// it should find a result
+	assert(it != hyperlinkMap.end());
+	it->second.addKeyFrame(key);
+
 }
 
+// find the hyperlink according to the name, and then set its secondaryVideoName and connectedFrameNo
 void Session::connectVideo( string name, int frames )
 {
-	throw std::exception("The method or operation is not implemented.");
+	//throw std::exception("The method or operation is not implemented.");
+	map<string,HyperLink>::iterator it = hyperlinkMap.find(name);
+	assert(it != hyperlinkMap.end());
+	it->second.connectToVideo(this->getSecondaryVideo()->getVideoName(), frames);
 }
 
 void Session::saveFile( string fileName )
-{
-	//throw std::exception("The method or operation is not implemented.");
+{	
+	fileName = "a.txt";
 	ofstream fout(fileName);
-	// map shuchu
-	
+	for(map<string,HyperLink>::iterator it = hyperlinkMap.begin(); it != hyperlinkMap.end(); it++)
+		fout<<it->second<<endl;
 }
 
 void Session::addHyperLink( std::string name, Keyframe keyframe )
-{
-
+{	
+		HyperLink temp(name);
+		temp.addKeyFrame(keyframe);
+		hyperlinkMap.insert(pair<string, HyperLink>(name, temp));
 }
 
-void Session::videoGoto( Video* video, int frames )
+Video* Session::getPrimaryVideo() const
 {
-
+	assert(primaryVideo != NULL);
+	return primaryVideo;
 }
+
+ Video* Session::getSecondaryVideo() const
+{
+	assert(secondaryVideo != NULL);
+	return secondaryVideo;
+}
+
+ bool Session::linkNameExist( std::string name )
+ {
+	 if(hyperlinkMap.empty())
+		 return false;
+
+	 map<string,HyperLink>::iterator it = hyperlinkMap.find(name);
+	 return it != hyperlinkMap.end();
+ }
+
+ vector<string> Session::getKeys()
+ {
+	vector<string> strs;
+	if( hyperlinkMap.empty())
+		return strs;
+	for(map<string, HyperLink>::iterator it = hyperlinkMap.begin(); it != hyperlinkMap.end(); it++)
+	{
+		strs.push_back(it->first);
+	}
+	return strs;
+ }
+
+ bool Session::valid()
+ {
+	return this->primaryVideo != NULL && this->secondaryVideo != NULL;
+ }

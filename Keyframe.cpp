@@ -16,11 +16,16 @@ Keyframe::~Keyframe(void)
 {
 }
 
+int Keyframe::getKeyFrameNo()
+{
+	return this->keyFrameNo;
+}
+
 ostream& operator<<(ostream& out, const Keyframe& keyframe)
 {
 	return out<<keyframe.keyFrameNo<<"	"
-		<<keyframe.area.upleft.x<<"	 "
-		<<keyframe.area.upleft.y
-		<<"  "<<keyframe.area.bottomright.x
-		<<"  "<<keyframe.area.bottomright.y<<endl;
+		<<keyframe.area.topleft.x()<<"	 "
+		<<keyframe.area.topleft.y()
+		<<"  "<<keyframe.area.bottomright.x()
+		<<"  "<<keyframe.area.bottomright.y()<<endl;
 }
