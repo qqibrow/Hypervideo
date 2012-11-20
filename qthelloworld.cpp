@@ -21,6 +21,8 @@ qtHelloWorld::qtHelloWorld(QWidget *parent, Qt::WFlags flags)
 	connect(ui.primaryVideoSlider, SIGNAL(sliderReleased()),this,SLOT(primaryVideoSliderClicked()));
 	connect(ui.secondaryVideoSlider, SIGNAL(sliderReleased()),this,SLOT(secondaryVideoSliderClicked()));
 	connect(ui.createLinkButton, SIGNAL(clicked()), this, SLOT(addLinkClicked()));
+	connect(ui.connectVideoButton, SIGNAL(clicked()), this, SLOT(connecVideoClicked()));
+	connect(ui.saveFileButton, SIGNAL(clicked()), this, SLOT(saveFileClicked()));
 	//videoProcessor.init(176,144,"Incursion_176x144.rgb");
 
 }
@@ -48,7 +50,7 @@ void qtHelloWorld::addPrimaryVideoClicked()
 	{
 		std::string utf8_text = videoName.toUtf8().constData();
 		session.setPrimaryVideo(new Video(utf8_text));
-		ui.primaryVideoSlider->setRange(1,session.getPrimaryVideoLength());
+		ui.primaryVideoSlider->setRange(1,session.getPrimaryVideo()->getTotalFrames());
 		//ui.primaryVideoView->get
 		//ui.primaryVideoView->setFixedWidth()
 		ui.primaryVideoView->setPixmap(QPixmap::fromImage(this->session.getPrimaryVideo()->getQimage()));
@@ -65,7 +67,7 @@ void qtHelloWorld::addSecondVideoClicked()
 	{
 		std::string utf8_text = videoName.toUtf8().constData();
 		session.setSecondaryVideo(new Video(utf8_text));
-		ui.secondaryVideoSlider->setRange(1,session.getSecondaryVideoLength());
+		ui.secondaryVideoSlider->setRange(1,session.getSecondaryVideo()->getTotalFrames());
 		ui.secondaryVideoView->setPixmap(QPixmap::fromImage(session.getSecondaryVideo()->getQimage()));
 	}
 
@@ -75,14 +77,14 @@ void qtHelloWorld::addSecondVideoClicked()
 void qtHelloWorld::primaryVideoSliderClicked()
 {
 	int value = this->ui.primaryVideoSlider->value();
-	session.primaryVideoGoto(value);
+	session.getPrimaryVideo()->goToframeNo(value);
 	ui.primaryVideoView->setPixmap(QPixmap::fromImage(this->session.getPrimaryVideo()->getQimage()));
 }
 
 void qtHelloWorld::secondaryVideoSliderClicked()
 {
 	int value = this->ui.secondaryVideoSlider->value();
-	session.secondaryVideoGoto(value);
+	session.getSecondaryVideo()->goToframeNo(value);
 	ui.secondaryVideoView->setPixmap(QPixmap::fromImage(this->session.getSecondaryVideo()->getQimage()));
 	
 }
@@ -112,14 +114,23 @@ void qtHelloWorld::finishDrawingRectangle()
 
 void qtHelloWorld::connecVideoClicked()
 {
-	string name; // get from option in the list
-	int frames; // get from secondaryVideo slider
-	session.connectVideo(name, frames);
+	string name = getSelectedItemText();
+	if(name == "")
+	{
+		QMessageBox::information(NULL, "Title","please select a hyperlink first", QMessageBox::Yes, QMessageBox::Yes);
+		return;
+	}
+	int frames = ui.secondaryVideoSlider->value();
+
+	if(!session.valid())
+		QMessageBox::information(NULL, "Title","please add both videos first", QMessageBox::Yes, QMessageBox::Yes);
+	else session.connectVideo(name, frames);
 }
 
 void qtHelloWorld::saveFileClicked()
 {
-	string fileName;
+
+	string fileName = this->session.getPrimaryVideo()->getVideoName() + ".meta";
 	session.saveFile(fileName);
 }
 
@@ -181,8 +192,10 @@ void qtHelloWorld::mouseReleaseEvent( QMouseEvent * event )
 		assert(list.size() < 2);
 		if(!list.empty())
 		{
-			addKeyFrameToSession(list[0]->text().toUtf8().constData());
-			QMessageBox::information(NULL, "Title","added a keyframe to a hyperlink", QMessageBox::Yes, QMessageBox::Yes);
+			string listName = list[0]->text().toUtf8().constData();
+			addKeyFrameToSession(listName);
+
+			QMessageBox::information(NULL, "Title",QString("added a keyframe to a hyperlink:") + list[0]->text(), QMessageBox::Yes, QMessageBox::Yes);
 		}
 	}
 }
@@ -219,9 +232,11 @@ void qtHelloWorld::addLinkClicked()
 			return;
 		}
 
-		// 这里应该直接创建到session中hyperlink
-		addKeyFrameToSession(linkName);
+		Area area(CurKeyFrameRect);
+		int frame = ui.primaryVideoSlider->value();
 
+		Keyframe key(area, frame);
+		session.addHyperLink(linkName,key);
 
 		//update items in the list
 		vector<string> list = session.getKeys();
@@ -233,8 +248,7 @@ void qtHelloWorld::addLinkClicked()
 // 			ui.listWidget->insertItem(i, newItem);
 			ui.listWidget->addItem(list[i].c_str());
 		}
-	//	ui.li
-		
+
 	}
 }
 
@@ -245,5 +259,15 @@ void qtHelloWorld::addKeyFrameToSession( string linkName )
 
 	Keyframe key(area, frame);
 	session.addKeyframe(linkName,key);
+}
+
+std::string qtHelloWorld::getSelectedItemText()
+{
+	QList<QListWidgetItem *> list = ui.listWidget->selectedItems();
+	assert(list.size() < 2);
+	if(!list.empty())
+		return list[0]->text().toUtf8().constData();
+	else
+		return "";
 }
 

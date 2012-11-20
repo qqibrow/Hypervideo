@@ -101,7 +101,6 @@
     <ClCompile Include="Image.cpp" />
     <ClCompile Include="Keyframe.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="MyGraphicsView.cpp" />
     <ClCompile Include="qthelloworld.cpp" />
     <ClCompile Include="Session.cpp" />
     <ClCompile Include="Video.cpp" />
@@ -138,7 +137,6 @@
     <ClInclude Include="HyperLink.h" />
     <ClInclude Include="Image.h" />
     <ClInclude Include="Keyframe.h" />
-    <ClInclude Include="MyGraphicsView.h" />
     <ClInclude Include="Params.h" />
     <ClInclude Include="Session.h" />
     <ClInclude Include="timer.h" />

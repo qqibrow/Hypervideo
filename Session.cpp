@@ -24,70 +24,42 @@ void Session::setSecondaryVideo( Video* secondaryVideo )
 	this->secondaryVideo = secondaryVideo;
 }
 
-void Session::primaryVideoGoto( int frames )
-{
-	this->videoGoto(primaryVideo, frames);
-}
-
-void Session::secondaryVideoGoto( int frames )
-{
-	this->videoGoto(secondaryVideo,frames);
-}
-
 void Session::addKeyframe( string name, Keyframe key )
 {
 	// find the hyperlink with name:name in the map
-	map<string,HyperLink>::iterator it;
-	it = hyperlinkMap.find(name);
-	if( it == hyperlinkMap.end()) // doesn't find 
-	{
-		HyperLink temp(name);
-		temp.addKeyFrame(key);
-		hyperlinkMap.insert(pair<string, HyperLink>(name, temp));
-	}
-	else
-		it->second.addKeyFrame(key);
+	map<string,HyperLink>::iterator it = hyperlinkMap.find(name);
+
+	// it should find a result
+	assert(it != hyperlinkMap.end());
+	it->second.addKeyFrame(key);
+
 }
 
+// find the hyperlink according to the name, and then set its secondaryVideoName and connectedFrameNo
 void Session::connectVideo( string name, int frames )
 {
-	throw std::exception("The method or operation is not implemented.");
+	//throw std::exception("The method or operation is not implemented.");
+	map<string,HyperLink>::iterator it = hyperlinkMap.find(name);
+	assert(it != hyperlinkMap.end());
+	it->second.connectToVideo(this->getSecondaryVideo()->getVideoName(), frames);
 }
 
 void Session::saveFile( string fileName )
-{
-	//throw std::exception("The method or operation is not implemented.");
+{	
+	fileName = "a.txt";
 	ofstream fout(fileName);
-	// map shuchu
-	
+	for(map<string,HyperLink>::iterator it = hyperlinkMap.begin(); it != hyperlinkMap.end(); it++)
+		fout<<it->second<<endl;
 }
 
 void Session::addHyperLink( std::string name, Keyframe keyframe )
-{
-
+{	
+		HyperLink temp(name);
+		temp.addKeyFrame(keyframe);
+		hyperlinkMap.insert(pair<string, HyperLink>(name, temp));
 }
 
-void Session::videoGoto( Video* video, int frames )
-{
-	video->goToframeNo(frames);
-}
-
-int Session::getPrimaryVideoLength()
-{
-	return getVideoLength(this->primaryVideo);
-}
-
-int Session::getVideoLength( Video* video )
-{
-	return video->getFrames();
-}
-
-int Session::getSecondaryVideoLength()
-{
-	return getVideoLength(this->secondaryVideo);
-}
-
-Video* Session::getPrimaryVideo()
+Video* Session::getPrimaryVideo() const
 {
 	assert(primaryVideo != NULL);
 	return primaryVideo;
@@ -118,4 +90,9 @@ Video* Session::getPrimaryVideo()
 		strs.push_back(it->first);
 	}
 	return strs;
+ }
+
+ bool Session::valid()
+ {
+	return this->primaryVideo != NULL && this->secondaryVideo != NULL;
  }

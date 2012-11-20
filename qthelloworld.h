@@ -26,9 +26,6 @@ public:
 		void secondaryVideoSliderClicked();
 		void finishDrawingRectangle();
 		void addLinkClicked();
-
-		void addKeyFrameToSession( std::string linkName );
-
 		void connecVideoClicked();
 		void saveFileClicked();
 		void updateView();
@@ -37,6 +34,8 @@ public:
 		void mouseReleaseEvent ( QMouseEvent * event );
 private:
 	bool insidePrimaryWidget(QPoint& point);
+	std::string getSelectedItemText();
+	void addKeyFrameToSession( std::string linkName );
 private:
 	Ui::qtHelloWorldClass ui;
 	Session session;

@@ -40,43 +40,17 @@
      </item>
     </layout>
    </widget>
-   <widget class="QWidget" name="layoutWidget">
-    <property name="geometry">
-     <rect>
-      <x>370</x>
-      <y>200</y>
-      <width>201</width>
-      <height>141</height>
-     </rect>
-    </property>
-    <layout class="QVBoxLayout" name="verticalLayout_6">
-     <item>
-      <widget class="QLabel" name="secondaryVideoView">
-       <property name="text">
-        <string>TextLabel</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QSlider" name="secondaryVideoSlider">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </widget>
    <widget class="QLabel" name="primaryVideoView">
     <property name="geometry">
      <rect>
       <x>32</x>
-      <y>192</y>
+      <y>190</y>
       <width>176</width>
       <height>144</height>
      </rect>
     </property>
     <property name="text">
-     <string>TextLabel</string>
+     <string>primaryVideo</string>
     </property>
    </widget>
    <widget class="QSlider" name="primaryVideoSlider">
@@ -102,7 +76,7 @@
      </rect>
     </property>
    </widget>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>30</x>
@@ -135,15 +109,39 @@
      </item>
     </layout>
    </widget>
-   <zorder>addPrimaryVideoButton</zorder>
+   <widget class="QLabel" name="secondaryVideoView">
+    <property name="geometry">
+     <rect>
+      <x>320</x>
+      <y>190</y>
+      <width>176</width>
+      <height>144</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>secondaryVideo</string>
+    </property>
+   </widget>
+   <widget class="QSlider" name="secondaryVideoSlider">
+    <property name="geometry">
+     <rect>
+      <x>310</x>
+      <y>350</y>
+      <width>199</width>
+      <height>19</height>
+     </rect>
+    </property>
+    <property name="orientation">
+     <enum>Qt::Horizontal</enum>
+    </property>
+   </widget>
    <zorder>layoutWidget</zorder>
-   <zorder>addSecondaryVideoButton</zorder>
    <zorder>layoutWidget</zorder>
    <zorder>primaryVideoView</zorder>
    <zorder>primaryVideoSlider</zorder>
-   <zorder>createLinkButton</zorder>
    <zorder>listWidget</zorder>
    <zorder>secondaryVideoView</zorder>
+   <zorder>secondaryVideoSlider</zorder>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">

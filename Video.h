@@ -15,8 +15,9 @@ public:
 	Video(std::string videoName);
 	~Video(void);
 	void goToframeNo( int frames );
-	int getFrames();
-	QImage getQimage();
+	std::string getVideoName() const;
+	int getTotalFrames() const;
+	QImage getQimage() ;
 
 private:
 	std::string videoName;

@@ -22,16 +22,21 @@ Video::~Video(void)
 
 void Video::goToframeNo( int frames )
 {
-	//assert( frames > 0 && frames < totalFrames);
+	assert( frames >= 0 && frames <= totalFrames);
 	this->videoProcessor.getToFrame(frames);
 }
 
-int Video::getFrames()
+int Video::getTotalFrames() const
 {
 	return this->totalFrames;
 }
 
-QImage Video::getQimage()
+QImage Video::getQimage() 
 {
 	return QImage((uchar*)videoProcessor.getImageData(), IMAGE_W, IMAGE_H, QImage::Format_RGB888);
+}
+
+std::string Video::getVideoName() const
+{
+	return this->videoName;
 }

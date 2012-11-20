@@ -11,7 +11,8 @@ public:
 	HyperLink(std::string name);
 	~HyperLink(void);
 	void addKeyFrame(Keyframe key);
-	std::ostream& operator<<(std::ostream& out);
+	void connectToVideo( std::string name, int frames );
+	friend std::ostream& operator<<(std::ostream& out, const HyperLink& keyframe);
 private:
 	std::vector<Keyframe> keyframes;
 	std::string name;
