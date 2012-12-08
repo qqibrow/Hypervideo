@@ -6,16 +6,16 @@
 #include <QPainter>
 #include "..\src\gui\kernel\qevent.h"
 #include <assert.h>
+#include "Color.h"
 using namespace std;
 
 qtHelloWorld::qtHelloWorld(QWidget *parent, Qt::WFlags flags)
 	: QMainWindow(parent, flags)
 {
 	ui.setupUi(this);
-
-	// set CSS
+	colors = ColorFactory::getListofColors();
 	ui.primaryVideoView->setStyleSheet("border: 2px solid black");
-
+	ui.secondaryVideoView->setStyleSheet("border: 2px solid black");
 	connect(ui.addPrimaryVideoButton, SIGNAL(clicked()), this, SLOT(addPrimaryVideoClicked()));
 	connect(ui.addSecondaryVideoButton, SIGNAL(clicked()), this, SLOT(addSecondVideoClicked()));
 	connect(ui.primaryVideoSlider, SIGNAL(sliderReleased()),this,SLOT(primaryVideoSliderClicked()));
@@ -23,22 +23,11 @@ qtHelloWorld::qtHelloWorld(QWidget *parent, Qt::WFlags flags)
 	connect(ui.createLinkButton, SIGNAL(clicked()), this, SLOT(addLinkClicked()));
 	connect(ui.connectVideoButton, SIGNAL(clicked()), this, SLOT(connecVideoClicked()));
 	connect(ui.saveFileButton, SIGNAL(clicked()), this, SLOT(saveFileClicked()));
-	//videoProcessor.init(176,144,"Incursion_176x144.rgb");
-
 }
 
 qtHelloWorld::~qtHelloWorld()
 {
 	
-}
-
-void qtHelloWorld::pushButtonClicked()
-{
-// 	videoProcessor.getNextFrame();
-// 	QImage image((uchar*)videoProcessor.getImageData(), 176, 144, QImage::Format_RGB888);
-// 	ui.label->setPixmap(QPixmap::fromImage(image));
-//	ui.label->setText("hello world");
-		
 }
 
 void qtHelloWorld::addPrimaryVideoClicked()
@@ -78,7 +67,10 @@ void qtHelloWorld::primaryVideoSliderClicked()
 {
 	int value = this->ui.primaryVideoSlider->value();
 	session.getPrimaryVideo()->goToframeNo(value);
-	ui.primaryVideoView->setPixmap(QPixmap::fromImage(this->session.getPrimaryVideo()->getQimage()));
+
+	//set the background 
+	curImg = drawAllHyperlinkBlocks(value);
+	ui.primaryVideoView->setPixmap(QPixmap::fromImage(curImg));
 }
 
 void qtHelloWorld::secondaryVideoSliderClicked()
@@ -150,7 +142,9 @@ void qtHelloWorld::mousePressEvent( QMouseEvent * event )
 		last.setX(0);
 		last.setY(0);
 	}
-		//QMessageBox::information(NULL, "Title", QString(info.c_str()), QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
+//	curImg = this->session.getPrimaryVideo()->getQimage();	
+
+	//QMessageBox::information(NULL, "Title", QString(info.c_str()), QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
 
 //	this->ui->primaryVideoView->rect();
 }
@@ -159,16 +153,11 @@ void qtHelloWorld::mouseMoveEvent( QMouseEvent * event )
 {
 	if (!last.isNull())
 	{
-
 		QPoint cur = event->pos() - ui.primaryVideoView->pos();
-		ui.primaryVideoView->clear();
 		QRect rec(last, cur);
-		QImage backImage = session.getPrimaryVideo()->getQimage().copy();
-		QPainter* painter = new QPainter(&backImage); 
-		painter->setPen(Qt::blue);
-		painter->drawRect(rec);
+		QImage backImage = curImg.copy();
+		drawRectOnImage(backImage, rec, Qt::blue);
 		ui.primaryVideoView->setPixmap(QPixmap::fromImage(backImage));
-		delete painter;
 	}
 }
 
@@ -177,26 +166,51 @@ void qtHelloWorld::mouseReleaseEvent( QMouseEvent * event )
 	
 	if (!last.isNull())
 	{
+		//set the new Rectangle
 		QPoint cur = event->pos() - ui.primaryVideoView->pos();
 		ui.primaryVideoView->clear();
 		QRect rec(last, cur);
-		QImage backImage = session.getPrimaryVideo()->getQimage().copy();
-		QPainter* painter = new QPainter(&backImage);
-		painter->setPen(Qt::red);
-		painter->drawRect(rec);
-		ui.primaryVideoView->setPixmap(QPixmap::fromImage(backImage));
-		delete painter;
+
 		CurKeyFrameRect = rec;
 
 		QList<QListWidgetItem *> list = ui.listWidget->selectedItems();
 		assert(list.size() < 2);
-		if(!list.empty())
-		{
-			string listName = list[0]->text().toUtf8().constData();
-			addKeyFrameToSession(listName);
 
-			QMessageBox::information(NULL, "Title",QString("added a keyframe to a hyperlink:") + list[0]->text(), QMessageBox::Yes, QMessageBox::Yes);
+		QImage bg = curImg.copy();
+		if(list.empty())
+			drawRectOnImage(bg, rec, Qt::red);
+		else
+		{
+			bool changed = false;
+			string listName = list[0]->text().toUtf8().constData();
+			int frame = ui.primaryVideoSlider->value();
+			Area area(CurKeyFrameRect);
+			Keyframe key(area, frame);
+
+			if(session.isKeyFrameExist(listName, frame))
+			{
+				switch(QMessageBox::question(NULL, "Title","keyframe exist. do you want to change that one?", 
+					QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes)
+				)
+				{
+				case QMessageBox::Yes:
+					session.updateKeyFrame(listName,key);
+					changed = true;
+					break;
+				default:
+					break;
+				}			
+			}
+			else
+			{
+				session.addKeyframe(listName,key);
+				changed = true;
+				QMessageBox::information(NULL, "Title",QString("added a keyframe to a hyperlink:") + list[0]->text(), QMessageBox::Yes, QMessageBox::Yes);
+			}
+			if(changed)
+				bg = curImg = drawAllHyperlinkBlocks(this->ui.primaryVideoSlider->value());			
 		}
+		ui.primaryVideoView->setPixmap(QPixmap::fromImage(bg));
 	}
 }
 
@@ -269,5 +283,29 @@ std::string qtHelloWorld::getSelectedItemText()
 		return list[0]->text().toUtf8().constData();
 	else
 		return "";
+}
+
+QImage qtHelloWorld::drawAllHyperlinkBlocks( int frameNumber )
+{
+	vector<Area> areas = session.getAllBlocks(frameNumber);
+	QImage backImage = session.getPrimaryVideo()->getQimage().copy();
+
+	for(int i = 0; i < areas.size(); i++)
+	{
+		if(!(areas[i].topleft.isNull() && areas[i].bottomright.isNull()))
+		{
+			QRect rec(areas[i].topleft, areas[i].bottomright);
+			drawRectOnImage(backImage, rec, colors[i]);
+		}
+	}
+	return backImage;
+}
+
+void qtHelloWorld::drawRectOnImage( QImage& image, QRect& rec, QColor color )
+{
+	QPainter* painter = new QPainter(&image); 
+	painter->setPen(color);
+	painter->drawRect(rec);
+	delete painter;
 }
 

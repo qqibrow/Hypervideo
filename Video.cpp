@@ -10,8 +10,9 @@ Video::Video(void)
 Video::Video( std::string videoName )
 {
 	this->videoName = videoName;
-	videoProcessor.init(IMAGE_W,IMAGE_H,videoName.c_str());
+	assert(videoProcessor.init(IMAGE_W,IMAGE_H,videoName.c_str()));
 	this->totalFrames = videoProcessor.getFileLength() /(IMAGE_H*IMAGE_W*3);
+	setFrame(0);
 }
 
 
@@ -20,10 +21,11 @@ Video::~Video(void)
 
 }
 
-void Video::goToframeNo( int frames )
+void Video::goToframeNo( int frame )
 {
-	assert( frames >= 0 && frames <= totalFrames);
-	this->videoProcessor.getToFrame(frames);
+	assert( frame >= 0 && frame <= totalFrames);
+	this->videoProcessor.getToFrame(frame);
+	setFrame(frame);
 }
 
 int Video::getTotalFrames() const
@@ -39,4 +41,26 @@ QImage Video::getQimage()
 std::string Video::getVideoName() const
 {
 	return this->videoName;
+}
+
+bool Video::isEnd()
+{
+	return curFrame  == totalFrames;
+}
+
+void Video::timeup()
+{
+	setFrame(curFrame+1);
+	this->videoProcessor.getToFrame(curFrame+1);
+	assert(curFrame <= totalFrames);
+}
+
+int Video::getCurrentFrame() const
+{
+	return curFrame;
+}
+
+void Video::setFrame( int frame )
+{
+	curFrame = frame;
 }

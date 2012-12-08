@@ -3,6 +3,7 @@
 #include "Keyframe.h"
 #include <ostream>
 #include <vector>
+#include <Qrect>
 
 class HyperLink
 {
@@ -12,7 +13,12 @@ public:
 	~HyperLink(void);
 	void addKeyFrame(Keyframe key);
 	void connectToVideo( std::string name, int frames );
-	friend std::ostream& operator<<(std::ostream& out, const HyperLink& keyframe);
+	friend std::ostream& operator<<(std::ostream& out, const HyperLink& link);
+	friend std::istream& operator>>(std::istream& in,  HyperLink& link);
+	bool isFrameExist( int frame ) const;
+	void updateKeyFrame( Keyframe key );
+	Area getAreaOfFrame(int frameNo) const;
+	QRect interpolateFrame(int frameNo) const;
 private:
 	std::vector<Keyframe> keyframes;
 	std::string name;

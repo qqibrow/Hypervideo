@@ -1,5 +1,5 @@
 #pragma once
-#include <ostream>
+#include <iostream>
 #include <QtCore>
 struct Point
 {
@@ -12,6 +12,7 @@ struct Point
 struct Area
 {
 	Area(){};
+	Area(QPoint tl, QPoint br): topleft(tl), bottomright(br){};
 	Area(QRect rect):topleft(rect.topLeft()),bottomright(rect.bottomRight()){};
 	QPoint topleft, bottomright;
 };
@@ -24,9 +25,13 @@ public:
 	Keyframe(Area a, int no);
 	~Keyframe(void);
 	friend std::ostream& operator<<(std::ostream& out, const Keyframe& keyframe);
-	int getKeyFrameNo();
+	friend std::istream& operator>>(std::istream& in, Keyframe& keyframe);
+	int getKeyFrameNo() const;
+	Area getArea() const { return area; }
+	void setArea(Area val) { area = val; }
 private:
 	int keyFrameNo;
 	Area area;
+	
 };
 

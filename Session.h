@@ -21,6 +21,9 @@ public:
 	 Video* getSecondaryVideo() const;
 	 std::vector<std::string> getKeys();
 	 bool valid();
+	 bool isKeyFrameExist( std::string listName, int frame );
+	 void updateKeyFrame( std::string linkName, Keyframe key );
+	 std::vector<Area> getAllBlocks( int frameNumber );
 private:
 	Video* primaryVideo, *secondaryVideo;
 	std::map<std::string, HyperLink> hyperlinkMap;

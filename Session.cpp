@@ -11,6 +11,8 @@ Session::Session(void):primaryVideo(NULL),secondaryVideo(NULL)
 
 Session::~Session(void)
 {
+	if(!primaryVideo) delete primaryVideo;
+	if(!secondaryVideo) delete secondaryVideo;
 }
 
 void Session::setPrimaryVideo( Video* primaryVideo )
@@ -20,7 +22,6 @@ void Session::setPrimaryVideo( Video* primaryVideo )
 
 void Session::setSecondaryVideo( Video* secondaryVideo )
 {
-	//throw std::exception("The method or operation is not implemented.");
 	this->secondaryVideo = secondaryVideo;
 }
 
@@ -31,6 +32,8 @@ void Session::addKeyframe( string name, Keyframe key )
 
 	// it should find a result
 	assert(it != hyperlinkMap.end());
+
+	// find duplicate
 	it->second.addKeyFrame(key);
 
 }
@@ -95,4 +98,30 @@ Video* Session::getPrimaryVideo() const
  bool Session::valid()
  {
 	return this->primaryVideo != NULL && this->secondaryVideo != NULL;
+ }
+
+ bool Session::isKeyFrameExist( string linkName, int frame )
+ {
+	 map<string,HyperLink>::iterator it = hyperlinkMap.find(linkName);
+	 assert(it != hyperlinkMap.end());
+	 return it->second.isFrameExist(frame);
+
+ }
+
+ void Session::updateKeyFrame( string linkName, Keyframe key )
+ {
+	 map<string,HyperLink>::iterator it = hyperlinkMap.find(linkName);
+	 assert(it != hyperlinkMap.end());
+	 return it->second.updateKeyFrame(key);
+ }
+
+ std::vector<Area> Session::getAllBlocks( int frameNumber )
+ {
+	std::vector<Area> areas;
+	for(map<string,HyperLink>::const_iterator it = hyperlinkMap.begin(); it != hyperlinkMap.end(); it++)
+	{
+		areas.push_back(it->second.getAreaOfFrame(frameNumber));
+	}
+	assert(areas.size() == hyperlinkMap.size());
+	return areas;
  }

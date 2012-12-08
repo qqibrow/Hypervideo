@@ -122,9 +122,9 @@ bool MyImage::ReadImage()
 	Data = new char[Width*Height*3];
 	for (i = 0; i < Height*Width; i++)
 	{
-		Data[3*i]	= Bbuf[i];
+		Data[3*i]	= Rbuf[i];
 		Data[3*i+1]	= Gbuf[i];
-		Data[3*i+2]	= Rbuf[i];
+		Data[3*i+2]	= Bbuf[i];
 	}
 
 	// Clean up and return
@@ -430,11 +430,24 @@ bool MyImage::imageFilter()
 	return true;
 }
 
+
+
+//************************************
+// Method:    ReadImageFromPointer
+// FullName:  MyImage::ReadImageFromPointer
+// Access:    public 
+// Returns:   @bool
+// Qualifier:
+// Parameter: char * start, a complete RRR...GGG...BBB... format data pointer
+// CreateTime: 12/7/2012 
+// Description: load a image to local variable Data, and change it format to RGBRGBRGB...
+// Modified History: 
+//************************************
 bool MyImage::ReadImageFromPointer( char* start )
 {
 
 	const int DIS = Width*Height;
-	char* RGBbuf = new char[ 3 * DIS ];
+	static char* RGBbuf = new char[ 3 * DIS ];
 
 	memcpy(RGBbuf, start, DIS*3);
 
@@ -446,12 +459,12 @@ bool MyImage::ReadImageFromPointer( char* start )
 
 	for( int i = 0; i < DIS; i++)
 	{
-		Data[3*i] = RGBbuf[i+ 2*DIS];
+		Data[3*i] = RGBbuf[i];
 		Data[3*i + 1] = RGBbuf[i + DIS];
-		Data[3*i + 2] = RGBbuf[i];
+		Data[3*i + 2] = RGBbuf[i+2*DIS];
 	}
 
-	delete[] RGBbuf;
+	//delete[] RGBbuf;
 	return true;
 }
 

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>623</width>
-    <height>520</height>
+    <width>856</width>
+    <height>624</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -45,8 +45,8 @@
      <rect>
       <x>32</x>
       <y>190</y>
-      <width>176</width>
-      <height>144</height>
+      <width>352</width>
+      <height>288</height>
      </rect>
     </property>
     <property name="text">
@@ -57,8 +57,8 @@
     <property name="geometry">
      <rect>
       <x>30</x>
-      <y>350</y>
-      <width>181</width>
+      <y>510</y>
+      <width>361</width>
       <height>19</height>
      </rect>
     </property>
@@ -112,10 +112,10 @@
    <widget class="QLabel" name="secondaryVideoView">
     <property name="geometry">
      <rect>
-      <x>320</x>
+      <x>460</x>
       <y>190</y>
-      <width>176</width>
-      <height>144</height>
+      <width>352</width>
+      <height>288</height>
      </rect>
     </property>
     <property name="text">
@@ -125,9 +125,9 @@
    <widget class="QSlider" name="secondaryVideoSlider">
     <property name="geometry">
      <rect>
-      <x>310</x>
-      <y>350</y>
-      <width>199</width>
+      <x>450</x>
+      <y>510</y>
+      <width>381</width>
       <height>19</height>
      </rect>
     </property>
@@ -148,7 +148,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>623</width>
+     <width>856</width>
      <height>23</height>
     </rect>
    </property>

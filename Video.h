@@ -3,8 +3,8 @@
 #include <QImage>
 #include <QPixmap>
 #include "VideoProcessor.h"
-#define IMAGE_W 176
-#define IMAGE_H 144
+#define IMAGE_W 352
+#define IMAGE_H 288
 
 
 
@@ -17,12 +17,16 @@ public:
 	void goToframeNo( int frames );
 	std::string getVideoName() const;
 	int getTotalFrames() const;
+	bool isEnd();
+	void timeup();
 	QImage getQimage() ;
+	int getCurrentFrame() const;
+	void setFrame(int frame);
 
 private:
 	std::string videoName;
 	VideoProcessor videoProcessor;
 	int totalFrames;
-
+	int curFrame;
 };
 

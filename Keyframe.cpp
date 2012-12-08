@@ -16,7 +16,7 @@ Keyframe::~Keyframe(void)
 {
 }
 
-int Keyframe::getKeyFrameNo()
+int Keyframe::getKeyFrameNo() const
 {
 	return this->keyFrameNo;
 }
@@ -28,4 +28,13 @@ ostream& operator<<(ostream& out, const Keyframe& keyframe)
 		<<keyframe.area.topleft.y()
 		<<"  "<<keyframe.area.bottomright.x()
 		<<"  "<<keyframe.area.bottomright.y()<<endl;
+}
+
+std::istream& operator>>( std::istream& in, Keyframe& keyframe )
+{
+	in>>keyframe.keyFrameNo;
+	int tlx,tly,brx,bry;
+	in>>tlx>>tly>>brx>>bry;
+	keyframe.setArea(Area(QPoint(tlx, tly), QPoint(brx, bry)));
+	return in;
 }

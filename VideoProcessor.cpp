@@ -90,7 +90,7 @@ bool VideoProcessor::getToFrame( int value )
 	int offset = h * w * 3 * frames;
 	if( offset == fileLength)
 	{
-		assert(false && "this means the video get the the last frame");
+	//	assert(false && "this means the video get the the last frame");
 		frames = 0;
 		offset = 0;
 	}

@@ -19,7 +19,6 @@ public:
 	~qtHelloWorld();
 	
 	protected slots:
-		void pushButtonClicked();
 		void addPrimaryVideoClicked();
 		void addSecondVideoClicked();
 		void primaryVideoSliderClicked();
@@ -36,11 +35,15 @@ private:
 	bool insidePrimaryWidget(QPoint& point);
 	std::string getSelectedItemText();
 	void addKeyFrameToSession( std::string linkName );
+	QImage drawAllHyperlinkBlocks(int frameNumber);
+	void drawRectOnImage(QImage& image, QRect& rec, QColor color);
 private:
 	Ui::qtHelloWorldClass ui;
 	Session session;
 	QPoint last;
 	QRect CurKeyFrameRect;
+	std::vector<QColor> colors;
+	QImage curImg;
 };
 
 #endif // QTHELLOWORLD_H
