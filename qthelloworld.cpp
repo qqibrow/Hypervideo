@@ -10,7 +10,7 @@
 using namespace std;
 
 qtHelloWorld::qtHelloWorld(QWidget *parent, Qt::WFlags flags)
-	: QMainWindow(parent, flags)
+	: QMainWindow(parent, flags),firstTime(true)
 {
 	ui.setupUi(this);
 	colors = ColorFactory::getListofColors();
@@ -32,6 +32,31 @@ qtHelloWorld::~qtHelloWorld()
 
 void qtHelloWorld::addPrimaryVideoClicked()
 {
+	if(!firstTime)
+	{
+		//construct a Qmessagebox
+		QMessageBox msgBox;
+		msgBox.setText("You are trying to start a new section, make sure you already saved");
+		msgBox.setInformativeText("Do you want to continue?");
+		msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+		msgBox.setDefaultButton(QMessageBox::No);
+		int ret = msgBox.exec();
+
+		switch (ret) {
+		case QMessageBox::Yes:
+			reload();
+			break;
+		case QMessageBox::No:
+			return;
+			break;
+		default:
+			// should never be reached
+			throw exception("should never be reached");
+			break;
+		}
+	}
+
+
 	QString videoName = QFileDialog::getOpenFileName(this, tr("Open File"),
 		"/",tr("Video (*.rgb)"));
 	
@@ -44,7 +69,8 @@ void qtHelloWorld::addPrimaryVideoClicked()
 		//ui.primaryVideoView->setFixedWidth()
 		ui.primaryVideoView->setPixmap(QPixmap::fromImage(this->session.getPrimaryVideo()->getQimage()));
 	}
-	
+	firstTime = false;
+	showQmessageBox("import primary video successfully");
 }
 
 void qtHelloWorld::addSecondVideoClicked()
@@ -60,11 +86,17 @@ void qtHelloWorld::addSecondVideoClicked()
 		ui.secondaryVideoView->setPixmap(QPixmap::fromImage(session.getSecondaryVideo()->getQimage()));
 	}
 
-	
+	showQmessageBox("import secondary video successfully");
 }
 
 void qtHelloWorld::primaryVideoSliderClicked()
 {
+	if(this->session.getPrimaryVideo() == NULL)
+	{
+		showQmessageBox("Sorry, you haven't set primary video yet");
+		this->ui.primaryVideoSlider->setValue(0);
+		return;
+	}
 	int value = this->ui.primaryVideoSlider->value();
 	session.getPrimaryVideo()->goToframeNo(value);
 
@@ -75,6 +107,12 @@ void qtHelloWorld::primaryVideoSliderClicked()
 
 void qtHelloWorld::secondaryVideoSliderClicked()
 {
+	if(this->session.getSecondaryVideo() == NULL)
+	{
+		showQmessageBox("Sorry, you haven't set secondary video yet");
+		this->ui.secondaryVideoSlider->setValue(0);
+		return;
+	}
 	int value = this->ui.secondaryVideoSlider->value();
 	session.getSecondaryVideo()->goToframeNo(value);
 	ui.secondaryVideoView->setPixmap(QPixmap::fromImage(this->session.getSecondaryVideo()->getQimage()));
@@ -115,15 +153,32 @@ void qtHelloWorld::connecVideoClicked()
 	int frames = ui.secondaryVideoSlider->value();
 
 	if(!session.valid())
+	{
 		QMessageBox::information(NULL, "Title","please add both videos first", QMessageBox::Yes, QMessageBox::Yes);
-	else session.connectVideo(name, frames);
+		return;
+	}	
+	else 
+		session.connectVideo(name, frames);
+
+	string info = "connect hyperlink " + name + " to current secondary video successfully";
+	showQmessageBox(info.c_str());
 }
 
 void qtHelloWorld::saveFileClicked()
 {
+	//show check every hyperlink should all have secondary video 
+
+	if (!(this->session.valid() && this->session.ifSaveFileValid()))
+	{
+		showQmessageBox("sorry, you must set primary video and all the secondary videos for the hyperlink first");
+		return;
+	}
+
 
 	string fileName = this->session.getPrimaryVideo()->getVideoName() + ".meta";
 	session.saveFile(fileName);
+	string info = "save file " + fileName + " to the same directory of primaryVideo successfully";
+	showQmessageBox(info.c_str());
 }
 
 void qtHelloWorld::updateView()
@@ -169,7 +224,20 @@ void qtHelloWorld::mouseReleaseEvent( QMouseEvent * event )
 		//set the new Rectangle
 		QPoint cur = event->pos() - ui.primaryVideoView->pos();
 		ui.primaryVideoView->clear();
-		QRect rec(last, cur);
+
+		QRect rec;
+		if(last.x() > cur.x() && last.y() > cur.y())
+		{
+			rec.setTopLeft(cur);
+			rec.setBottomRight(last);
+		}
+		else
+		{
+			rec.setBottomRight(cur);
+			rec.setTopLeft(last);
+		}
+
+	//	QRect rec(last, cur);
 
 		CurKeyFrameRect = rec;
 
@@ -222,6 +290,12 @@ bool qtHelloWorld::insidePrimaryWidget(QPoint& p)
 
 void qtHelloWorld::addLinkClicked()
 {
+	if(this->session.getPrimaryVideo() == NULL)
+	{
+		showQmessageBox("You haven't set a primary video yet");
+		return;
+	}
+
 	if (CurKeyFrameRect.isNull())
 	{
 		QMessageBox::information(NULL, "Title","please draw a rectangle first", QMessageBox::Yes, QMessageBox::Yes);
@@ -234,11 +308,15 @@ void qtHelloWorld::addLinkClicked()
 			QDir::home().dirName(), &ok);
 
 		string linkName;
-		if (!ok || text.isEmpty())
+		if(!ok)
+			return;
+
+		if (text.isEmpty())
 		{
 			QMessageBox::information(NULL, "Title","please input hyperlink name", QMessageBox::Yes, QMessageBox::Yes);
 			return;
 		}
+
 		linkName = text.toUtf8().constData();
 		if(session.linkNameExist(linkName))
 		{
@@ -307,5 +385,17 @@ void qtHelloWorld::drawRectOnImage( QImage& image, QRect& rec, QColor color )
 	painter->setPen(color);
 	painter->drawRect(rec);
 	delete painter;
+}
+
+void qtHelloWorld::showQmessageBox( const QString info )
+{
+	QMessageBox::information(NULL, "Title",info, QMessageBox::Yes, QMessageBox::Yes);
+}
+
+void qtHelloWorld::reload()
+{
+	//throw std::exception("The method or operation is not implemented.");
+	this->session.clear();
+	ui.listWidget->clear();
 }
 

@@ -37,6 +37,8 @@ private:
 	void addKeyFrameToSession( std::string linkName );
 	QImage drawAllHyperlinkBlocks(int frameNumber);
 	void drawRectOnImage(QImage& image, QRect& rec, QColor color);
+	void showQmessageBox(const QString info);
+	void reload();
 private:
 	Ui::qtHelloWorldClass ui;
 	Session session;
@@ -44,6 +46,7 @@ private:
 	QRect CurKeyFrameRect;
 	std::vector<QColor> colors;
 	QImage curImg;
+	bool firstTime;
 };
 
 #endif // QTHELLOWORLD_H

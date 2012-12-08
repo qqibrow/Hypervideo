@@ -27,7 +27,7 @@ HyperLink::HyperLink(void)
 {
 }
 
-HyperLink::HyperLink( std::string name ):name(name),id(qrand()%0xefffffff)
+HyperLink::HyperLink( std::string name ):name(name),id(qrand()%0xefffffff),secondaryVideoName("")
 {
 
 }
@@ -86,6 +86,11 @@ QRect HyperLink::interpolateFrame( int frameNo ) const
 	return QRect();
 }
 
+int HyperLink::getSecondaryVideoStartFrame() const
+{
+	return this->secondaryFrameNumber;
+}
+
 std::istream& operator>>( std::istream& in, HyperLink& link )
 {
 	int numOfkeyFrames;
@@ -98,3 +103,4 @@ std::istream& operator>>( std::istream& in, HyperLink& link )
 	}
 	return in;	
 }
+

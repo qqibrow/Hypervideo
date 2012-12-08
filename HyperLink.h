@@ -19,6 +19,8 @@ public:
 	void updateKeyFrame( Keyframe key );
 	Area getAreaOfFrame(int frameNo) const;
 	QRect interpolateFrame(int frameNo) const;
+	std::string getSecondaryVideoName() const {return secondaryVideoName;};
+int getSecondaryVideoStartFrame() const;
 private:
 	std::vector<Keyframe> keyframes;
 	std::string name;

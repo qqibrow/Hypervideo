@@ -49,7 +49,7 @@ void Session::connectVideo( string name, int frames )
 
 void Session::saveFile( string fileName )
 {	
-	fileName = "a.txt";
+	//fileName = "a.txt";
 	ofstream fout(fileName);
 	for(map<string,HyperLink>::iterator it = hyperlinkMap.begin(); it != hyperlinkMap.end(); it++)
 		fout<<it->second<<endl;
@@ -64,13 +64,13 @@ void Session::addHyperLink( std::string name, Keyframe keyframe )
 
 Video* Session::getPrimaryVideo() const
 {
-	assert(primaryVideo != NULL);
+//	assert(primaryVideo != NULL);
 	return primaryVideo;
 }
 
  Video* Session::getSecondaryVideo() const
 {
-	assert(secondaryVideo != NULL);
+	//assert(secondaryVideo != NULL);
 	return secondaryVideo;
 }
 
@@ -124,4 +124,19 @@ Video* Session::getPrimaryVideo() const
 	}
 	assert(areas.size() == hyperlinkMap.size());
 	return areas;
+ }
+
+ void Session::clear()
+ {
+	 this->hyperlinkMap.clear();
+ }
+
+ bool Session::ifSaveFileValid()
+ {
+	 for(map<string,HyperLink>::const_iterator it = hyperlinkMap.begin(); it != hyperlinkMap.end(); it++)
+	 {
+		 if(it->second.getSecondaryVideoName() == "")
+			 return false;
+	 }
+	 return true;
  }
