@@ -1,7 +1,10 @@
 #include "HyperLink.h"
 #include <QtGlobal>
 #include <algorithm>
-
+#include <assert.h>
+#ifdef DEBUG
+#include <vld.h>
+#endif
 using namespace std;
 
 struct comp {
@@ -79,11 +82,32 @@ Area HyperLink::getAreaOfFrame( int frameNo ) const
 }
 
 QRect HyperLink::interpolateFrame( int frameNo ) const
-{
+{	
+	if(keyframes.size() == 1) return QRect();
 
+	int upkeyframe,downkeyframe;
+	int i;
+	for(i = 0; i < keyframes.size() && keyframes[i].getKeyFrameNo() < frameNo; i++);
 
+	if(i == 0 || i == keyframes.size())
+		return  QRect();
+	else if(i-1 >= 0)
+	{
+		int interpolateNo = keyframes[i].getKeyFrameNo()-keyframes[i-1].getKeyFrameNo();
+		int topleft_x = keyframes[i-1].getArea().topleft.x() + (frameNo - keyframes[i-1].getKeyFrameNo()) * (keyframes[i].getArea().topleft.x() - keyframes[i-1].getArea().topleft.x()) / interpolateNo;
+		int topleft_y = keyframes[i-1].getArea().topleft.y() + (frameNo - keyframes[i-1].getKeyFrameNo()) * (keyframes[i].getArea().topleft.y() - keyframes[i-1].getArea().topleft.y()) / interpolateNo;
+		int bottomright_x = keyframes[i-1].getArea().bottomright.x() + (frameNo - keyframes[i-1].getKeyFrameNo()) * (keyframes[i].getArea().bottomright.x() - keyframes[i-1].getArea().bottomright.x()) / interpolateNo;
+		int bottomright_y = keyframes[i-1].getArea().bottomright.y() + (frameNo - keyframes[i-1].getKeyFrameNo()) * (keyframes[i].getArea().bottomright.y() - keyframes[i-1].getArea().bottomright.y()) / interpolateNo;
 
-	return QRect();
+		QRect rect;
+		rect.setTopLeft(QPoint(topleft_x, topleft_y));
+		rect.setBottomRight(QPoint(bottomright_x, bottomright_y));
+		return rect;
+	}
+	else{
+		assert(false && "this cannot happen");
+		return QRect();
+	}
 }
 
 int HyperLink::getSecondaryVideoStartFrame() const

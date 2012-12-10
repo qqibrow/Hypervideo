@@ -2,6 +2,9 @@
 #include <fstream>
 #include <assert.h>
 #include <string>
+#ifdef DEBUG
+#include <vld.h>
+#endif
 using namespace std;
 
 Session::Session(void):primaryVideo(NULL),secondaryVideo(NULL)
@@ -11,17 +14,19 @@ Session::Session(void):primaryVideo(NULL),secondaryVideo(NULL)
 
 Session::~Session(void)
 {
-	if(!primaryVideo) delete primaryVideo;
-	if(!secondaryVideo) delete secondaryVideo;
+	if(primaryVideo) delete primaryVideo;
+	if(secondaryVideo) delete secondaryVideo;
 }
 
 void Session::setPrimaryVideo( Video* primaryVideo )
 {
+	if(this->primaryVideo) delete this->primaryVideo;
 	this->primaryVideo = primaryVideo;
 }
 
 void Session::setSecondaryVideo( Video* secondaryVideo )
 {
+	if(this->secondaryVideo) delete this->secondaryVideo;
 	this->secondaryVideo = secondaryVideo;
 }
 

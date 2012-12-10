@@ -1,8 +1,8 @@
 #include "VideoProcessor.h"
-
-
 #include "FileController.h"
-
+#ifdef DEBUG
+#include <vld.h>
+#endif
 #include <string>
 #include <assert.h>
 
@@ -10,7 +10,7 @@ using namespace std;
 
 VideoProcessor::~VideoProcessor()
 {
-	if(!buff) delete[] buff;
+	if(buff) delete[] buff;
 }
 
 bool VideoProcessor::getNextFrame()

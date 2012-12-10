@@ -1,5 +1,7 @@
 #include "FileController.h"
-
+#ifdef DEBUG
+#include <vld.h>
+#endif
 using namespace std;
 
 FileController::FileController(void)

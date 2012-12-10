@@ -4,9 +4,17 @@
 #include <QFileDialog>
 #include <QInputDialog>
 #include <QPainter>
-#include "..\src\gui\kernel\qevent.h"
+#include <QEvent>
+#include <QMouseEvent>
 #include <assert.h>
 #include "Color.h"
+
+#ifdef DEBUG
+#include <vld.h>
+#endif
+
+
+#define LEAK_TEST
 using namespace std;
 
 qtHelloWorld::qtHelloWorld(QWidget *parent, Qt::WFlags flags)
@@ -32,15 +40,20 @@ qtHelloWorld::~qtHelloWorld()
 
 void qtHelloWorld::addPrimaryVideoClicked()
 {
+	int ret = 0;
 	if(!firstTime)
 	{
 		//construct a Qmessagebox
+
+#ifdef LEAK_TEST
 		QMessageBox msgBox;
 		msgBox.setText("You are trying to start a new section, make sure you already saved");
 		msgBox.setInformativeText("Do you want to continue?");
 		msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
 		msgBox.setDefaultButton(QMessageBox::No);
-		int ret = msgBox.exec();
+		ret = msgBox.exec();
+#endif
+	
 
 		switch (ret) {
 		case QMessageBox::Yes:
@@ -54,13 +67,34 @@ void qtHelloWorld::addPrimaryVideoClicked()
 			throw exception("should never be reached");
 			break;
 		}
+	
 	}
 
+	//reload only if the videoName != "" && ret == yes
 
-	QString videoName = QFileDialog::getOpenFileName(this, tr("Open File"),
-		"/",tr("Video (*.rgb)"));
 	
-	if(videoName != "")
+#ifdef LEAK_TEST
+ 	QString videoName = QFileDialog::getOpenFileName(this, tr("Open File"),
+ 		"/",tr("Video (*.rgb)"));
+#endif
+
+#ifndef LEAK_TEST
+	static int xxx = 5;
+	QString videoName = QString("vdo%1.rgb").arg(xxx++);
+	std::string utf8_text = videoName.toUtf8().constData();
+	session.setPrimaryVideo(new Video(utf8_text));
+	ui.primaryVideoSlider->setRange(1,session.getPrimaryVideo()->getTotalFrames());
+	//ui.primaryVideoView->get
+	//ui.primaryVideoView->setFixedWidth()
+	ui.primaryVideoView->setPixmap(QPixmap::fromImage(this->session.getPrimaryVideo()->getQimage()));
+	firstTime = false;
+	showQmessageBox("import primary video successfully");
+	this->ui.primaryVideoSlider->setValue(40);
+	primaryVideoSliderClicked();
+#endif
+	
+	
+	if(videoName != "" && (firstTime || ret == QMessageBox::Yes))
 	{
 		std::string utf8_text = videoName.toUtf8().constData();
 		session.setPrimaryVideo(new Video(utf8_text));
@@ -68,9 +102,11 @@ void qtHelloWorld::addPrimaryVideoClicked()
 		//ui.primaryVideoView->get
 		//ui.primaryVideoView->setFixedWidth()
 		ui.primaryVideoView->setPixmap(QPixmap::fromImage(this->session.getPrimaryVideo()->getQimage()));
+		firstTime = false;
+		showQmessageBox("import primary video successfully");
+		this->ui.primaryVideoSlider->setValue(40);
+		primaryVideoSliderClicked();
 	}
-	firstTime = false;
-	showQmessageBox("import primary video successfully");
 }
 
 void qtHelloWorld::addSecondVideoClicked()
@@ -122,24 +158,6 @@ void qtHelloWorld::secondaryVideoSliderClicked()
 
 void qtHelloWorld::finishDrawingRectangle()
 {
-	if(CurKeyFrameRect.isNull())
-		return;
-
-	Area area; // check whether it's valid
-	int frame;
-	Keyframe key(area, frame);
-
-	if( /* already selected a option in the list*/false)
-	{
-		string name; // get from the list
-		session.addKeyframe(name, key); // pay attetion to sort the keyframes
-	}
-	else
-	{
-		// create a new hyperlink
-		string hyperlikeName; // get from a popup window
-		session.addHyperLink(hyperlikeName, key);
-	}
 }
 
 void qtHelloWorld::connecVideoClicked()
@@ -147,14 +165,14 @@ void qtHelloWorld::connecVideoClicked()
 	string name = getSelectedItemText();
 	if(name == "")
 	{
-		QMessageBox::information(NULL, "Title","please select a hyperlink first", QMessageBox::Yes, QMessageBox::Yes);
+		showQmessageBox("please select a hyperlink first");
 		return;
 	}
 	int frames = ui.secondaryVideoSlider->value();
 
 	if(!session.valid())
 	{
-		QMessageBox::information(NULL, "Title","please add both videos first", QMessageBox::Yes, QMessageBox::Yes);
+		showQmessageBox("please add both videos first");
 		return;
 	}	
 	else 
@@ -389,7 +407,10 @@ void qtHelloWorld::drawRectOnImage( QImage& image, QRect& rec, QColor color )
 
 void qtHelloWorld::showQmessageBox( const QString info )
 {
+#ifdef LEAK_TEST
 	QMessageBox::information(NULL, "Title",info, QMessageBox::Yes, QMessageBox::Yes);
+#endif
+	
 }
 
 void qtHelloWorld::reload()

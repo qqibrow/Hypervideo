@@ -1,5 +1,7 @@
 #include "Keyframe.h"
-
+#ifdef DEBUG
+#include <vld.h>
+#endif
 using namespace std;
 
 Keyframe::Keyframe(void)

@@ -1,6 +1,8 @@
 #include "Video.h"
 #include <assert.h>
-
+#ifdef DEBUG
+#include <vld.h>
+#endif
 using namespace std;
 
 Video::Video(void)

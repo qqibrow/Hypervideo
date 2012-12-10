@@ -10,7 +10,9 @@
 #include "Image.h"
 #include <ctime>
 #include <random>
-
+#ifdef DEBUG
+#include <vld.h>
+#endif
 
 // Constructor and Desctructors
 MyImage::MyImage() 
@@ -20,6 +22,7 @@ MyImage::MyImage()
 	Height = -1;
 	ImagePath[0] = 0;
 	tempbuffer = NULL;
+	RGBbuf = NULL;
 }
 
 MyImage::~MyImage()
@@ -29,6 +32,9 @@ MyImage::~MyImage()
 
 	if(tempbuffer)
 		delete[] tempbuffer;
+
+	if(RGBbuf)
+		delete[] RGBbuf;
 }
 
 
@@ -52,6 +58,7 @@ MyImage::MyImage( int w, int h, char* data /*= NULL*/ )
 {
 	this->Width = w;
 	this->Height = h;
+	RGBbuf = new char[3*w*h];
 	this->Data = data;
 	ImagePath[0] = 0;
 	tempbuffer = NULL;
@@ -445,9 +452,11 @@ bool MyImage::imageFilter()
 //************************************
 bool MyImage::ReadImageFromPointer( char* start )
 {
-
+	
 	const int DIS = Width*Height;
-	static char* RGBbuf = new char[ 3 * DIS ];
+
+	if(!RGBbuf)
+		RGBbuf = new char[DIS*3];
 
 	memcpy(RGBbuf, start, DIS*3);
 

@@ -3,6 +3,9 @@
 #include <QImage>
 #include <QPixmap>
 #include "VideoProcessor.h"
+#ifdef DEBUG
+#include <vld.h>
+#endif
 #define IMAGE_W 352
 #define IMAGE_H 288
 

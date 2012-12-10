@@ -34,6 +34,7 @@ private:
 	char	ImagePath[_MAX_PATH];	// Image location
 	char*	Data;					// RGB data of the image
 	char*	tempbuffer;             // temper buffer
+	char*	RGBbuf;
 
 public:
 	// Constructor
