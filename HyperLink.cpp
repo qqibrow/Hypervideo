@@ -119,6 +119,11 @@ std::istream& operator>>( std::istream& in, HyperLink& link )
 {
 	int numOfkeyFrames;
 	in>>link.id>>link.name>>numOfkeyFrames>>link.secondaryVideoName>>link.secondaryFrameNumber;
+
+	if(!link.keyframes.empty())
+	{
+		link.keyframes.clear();
+	}
 	Keyframe key;
 	for(int i = 0; i < numOfkeyFrames; i++)
 	{

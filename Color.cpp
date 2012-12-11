@@ -1,4 +1,5 @@
 #include "Color.h"
+#include <algorithm>
 #define colorNum 20
 
 #define COLOR_INTERVAL ((360 / colorNum ) - 1)
@@ -12,6 +13,7 @@ vector<QColor> ColorFactory::getListofColors()
 	{
 		color.setHsv(i*COLOR_INTERVAL, 255,255);
 		colorlist.push_back(color);
+		random_shuffle(colorlist.begin(), colorlist.end());
 	}
 	return colorlist;
 }

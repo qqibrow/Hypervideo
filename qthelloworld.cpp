@@ -119,9 +119,10 @@ void qtHelloWorld::addSecondVideoClicked()
 		session.setSecondaryVideo(new Video(utf8_text));
 		ui.secondaryVideoSlider->setRange(1,session.getSecondaryVideo()->getTotalFrames());
 		ui.secondaryVideoView->setPixmap(QPixmap::fromImage(session.getSecondaryVideo()->getQimage()));
+		showQmessageBox("import secondary video successfully");
 	}
 
-	showQmessageBox("import secondary video successfully");
+	
 }
 
 void qtHelloWorld::primaryVideoSliderClicked()
@@ -137,7 +138,7 @@ void qtHelloWorld::primaryVideoSliderClicked()
 
 	//set the background 
 	curImg = drawAllHyperlinkBlocks(value);
-	ui.primaryVideoView->setPixmap(QPixmap::fromImage(curImg));
+	ui.primaryVideoView->setPixmap(QPixmap::fromImage(curImg,Qt::ColorOnly));
 }
 
 void qtHelloWorld::secondaryVideoSliderClicked()
@@ -213,6 +214,7 @@ void qtHelloWorld::mousePressEvent( QMouseEvent * event )
 	{
 		last.setX(0);
 		last.setY(0);
+		ui.listWidget->setItemSelected(NULL,true);
 	}
 //	curImg = this->session.getPrimaryVideo()->getQimage();	
 
