@@ -10,7 +10,7 @@ using namespace std;
 
 VideoProcessor::~VideoProcessor()
 {
-	if(buff) delete[] buff;
+//	if(buff) {delete[] buff;buff = NULL;}
 }
 
 bool VideoProcessor::getNextFrame()
