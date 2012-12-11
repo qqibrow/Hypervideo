@@ -1,7 +1,7 @@
 #include "Video.h"
 #include "FileController.h"
-#include "Image.h"
 #include <assert.h>
+
 #ifdef DEBUG
 #include <vld.h>
 #endif
@@ -9,60 +9,47 @@ using namespace std;
 
 Video::Video(void)
 {
+	buff = NULL;
 }
 
 Video::Video( std::string videoName )
 {
+	buff = new char[IMAGE_W*IMAGE_H*3*720];
 	this->videoName = videoName;
-// 	VideoProcessor videoProcessor;
-// 	assert(videoProcessor.init(IMAGE_W,IMAGE_H,videoName.c_str()));
-// 	this->totalFrames = videoProcessor.getFileLength() /(IMAGE_H*IMAGE_W*3);
-// 
-// 		for( int i = 0; i < totalFrames; i++)
-// 	{
-// 		
-// 		videoProcessor.getToFrame(i);
-// 		imageVector.push_back(QImage((uchar*)videoProcessor.getImageData(), IMAGE_W, IMAGE_H, QImage::Format_RGB888));
-// 	}
-
-
-
 	FileController fileloader(videoName, "rb");
 	int fileLength = fileloader.getFileLength();
-//	buff = new char[fileLength = fileloader.getFileLength()];
 	this->totalFrames = fileLength /(IMAGE_H*IMAGE_W*3);
 
 	assert(fileloader.readWholeFileInBuffer(buff));
-// 	
-// 	MyImage image;
-// 	image.setHeight(IMAGE_H);
-// 	image.setWidth(IMAGE_W);
-// 
-// 	for( int i = 0; i < totalFrames; i++)
-// 	{
-// 		int offset = IMAGE_W*IMAGE_H*3*i;
-// 		assert(image.ReadImageFromPointer(buff + offset));
-// 		QImage image((uchar*)image.getImageData(),IMAGE_W, IMAGE_H, QImage::Format_RGB888 );
-// 		imageVector.push_back(image);
-// 	}
-//	image.set
 
-//	delete[] buff;
 	curFrame = 0;
-	setFrame(curFrame);
+}
+
+Video::Video( Video& other )
+{
+	this->videoName = other.videoName;
+	this->totalFrames = other.totalFrames;
+	this->buff = new char[IMAGE_W*IMAGE_H*3*720];
+	memcpy(buff, other.buff, IMAGE_W*IMAGE_H*3*720);
+	this->curFrame = other.curFrame;
+
 }
 
 
 Video::~Video(void)
 {
-
+	if (buff)
+	{
+		delete[] buff;
+		buff = NULL;
+	}
 }
 
 void Video::goToframeNo( int frame )
 {
-	assert( frame >= 0 && frame <= totalFrames);
-	//this->videoProcessor.getToFrame(frame);
-	setFrame(frame);
+	if(frame >= totalFrames)
+		curFrame = totalFrames - 1;
+	else curFrame = frame;
 }
 
 int Video::getTotalFrames() const
@@ -75,9 +62,6 @@ QImage Video::getQimage()
 	int offset = IMAGE_W*IMAGE_H*3*curFrame;
 	ReadImageFromPointer(buff + offset);
 	return QImage((uchar*)data,IMAGE_W, IMAGE_H, QImage::Format_RGB888 );
-
-	//return QImage((uchar*)videoProcessor.getImageData(), IMAGE_W, IMAGE_H, QImage::Format_RGB888);
-//	return imageVector[curFrame];
 }
 
 std::string Video::getVideoName() const
@@ -85,20 +69,11 @@ std::string Video::getVideoName() const
 	return this->videoName;
 }
 
-bool Video::isEnd()
-{
-	return curFrame  == totalFrames-1;
-}
-
 int Video::getCurrentFrame() const
 {
 	return curFrame;
 }
 
-void Video::setFrame( int frame )
-{
-	curFrame = frame;
-}
 
 void Video::ReadImageFromPointer( char* start )
 {

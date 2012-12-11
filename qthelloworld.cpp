@@ -79,7 +79,6 @@ void qtHelloWorld::addPrimaryVideoClicked()
 #endif
 
 #ifndef LEAK_TEST
-	static int xxx = 5;
 	QString videoName = QString("vdo%1.rgb").arg(xxx++);
 	std::string utf8_text = videoName.toUtf8().constData();
 	session.setPrimaryVideo(new Video(utf8_text));
