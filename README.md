@@ -4,5 +4,4 @@ The whole project consists of two parts: a hyper linking tool for video and a vi
 
 This project is implemented in C++, using Qt library. Qt is more than a UI creator, but a event-driven programming library. I am still studying its "slot and signal" mechanism, similar to that in Boost. It is really amazing and powerful.
 
-Currently, it is still under testing for better performance. The beta version will be comming soon.
 
