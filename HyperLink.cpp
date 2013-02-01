@@ -98,15 +98,11 @@ QRect HyperLink::interpolateFrame( int frameNo ) const
 		int topleft_y = keyframes[i-1].getArea().topleft.y() + (frameNo - keyframes[i-1].getKeyFrameNo()) * (keyframes[i].getArea().topleft.y() - keyframes[i-1].getArea().topleft.y()) / interpolateNo;
 		int bottomright_x = keyframes[i-1].getArea().bottomright.x() + (frameNo - keyframes[i-1].getKeyFrameNo()) * (keyframes[i].getArea().bottomright.x() - keyframes[i-1].getArea().bottomright.x()) / interpolateNo;
 		int bottomright_y = keyframes[i-1].getArea().bottomright.y() + (frameNo - keyframes[i-1].getKeyFrameNo()) * (keyframes[i].getArea().bottomright.y() - keyframes[i-1].getArea().bottomright.y()) / interpolateNo;
-
-		QRect rect;
-		rect.setTopLeft(QPoint(topleft_x, topleft_y));
-		rect.setBottomRight(QPoint(bottomright_x, bottomright_y));
-		return rect;
+		return QRect(QPoint(topleft_x, topleft_y), QPoint(bottomright_x, bottomright_y));
 	}
 	else{
 		assert(false && "this cannot happen");
-		return QRect();
+		exit(-1);
 	}
 }
 
